@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
 
+import 'configure/configure_page.dart';
 import 'home_page.dart';
+import 'redirect_page.dart';
 
 final routes = <RouteBase>[
   GoRoute(
@@ -19,6 +21,34 @@ final routes = <RouteBase>[
       fullscreenDialog: true,
       child: HomePage(),
     ),
+  ),
+  GoRoute(
+    path: ConfigurePage.path,
+    name: ConfigurePage.name,
+    pageBuilder: (_, state) {
+      return MaterialPage(
+        name: ConfigurePage.name,
+        fullscreenDialog: true,
+        child: ConfigurePage(
+          hash: Uri.decodeComponent(state.uri.fragment),
+        ),
+      );
+    },
+  ),
+  GoRoute(
+    path: RedirectPage.path,
+    name: RedirectPage.name,
+    pageBuilder: (_, state) {
+      return MaterialPage(
+        name: RedirectPage.name,
+        fullscreenDialog: true,
+        child: RedirectPage(
+          id: state.uri.queryParameters['id']!,
+          secret: state.uri.queryParameters['secret']!,
+          uid: state.uri.queryParameters['uid']!,
+        ),
+      );
+    },
   ),
 ];
 

@@ -49,10 +49,13 @@ class ObedienceApi {
   }) async {
     await http.post(
       Uri.parse(
-        'https://app.obedienceapp.com/extensions/webhooks?'
+        'https://app.obedienceapp.com/extensions/webhook?'
         'extensionId=$extensionId&'
         'secret=$extensionSecret',
       ),
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: jsonEncode({
         'url': url,
         'habits': habits,

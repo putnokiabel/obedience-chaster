@@ -45,10 +45,12 @@ const chasterApiKey = process.env.CHASTER_API_KEY;
     body: JSON.stringify({
       config: {
         extensionId: id,
-        sessionId: configuration?.sessionId,
       },
     }),
   });
 
-  return id;
+  return {
+    extensionId: id,
+    sessionId: configuration?.sessionId,
+  };
 });

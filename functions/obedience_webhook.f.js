@@ -12,6 +12,7 @@ const db = admin.firestore();
 const chasterApiKey = process.env.CHASTER_API_KEY;
 
 (exports) = module.exports = onRequest(async (request, response) => {
+  console.log(request.body);
   const {type, extensionId, secret, before, after} = request.body;
 
   if (type != "reward" && type != "punishment") {
@@ -56,7 +57,7 @@ const chasterApiKey = process.env.CHASTER_API_KEY;
     rewardId == after.id &&
     rewardMinutes > 0) {
     // Subtract minutes from the session using Chaster API.
-    await fetch(`https://api.chaster.app/api/sessions/${sessionId}/action`, {
+    const res = await fetch(`https://api.chaster.app/api/extensions/sessions/${sessionId}/action`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${chasterApiKey}`,
@@ -69,19 +70,20 @@ const chasterApiKey = process.env.CHASTER_API_KEY;
         },
       }),
     });
+    console.log(await res.text());
 
     console.log(
         `Removed ${rewardMinutes * amountDifference} ` +
         `minutes from session ${sessionId}`,
     );
-    response.status(200).send("Success");
+    return response.status(200).send("Success");
   }
 
   if (type == "punishment" &&
     punishmentId == after.id &&
     punishmentMinutes > 0) {
     // Add minutes to the session using Chaster API.
-    await fetch(`https://api.chaster.app/api/sessions/${sessionId}/action`, {
+    const res = await fetch(`https://api.chaster.app/api/extensions/sessions/${sessionId}/action`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${chasterApiKey}`,
@@ -95,13 +97,15 @@ const chasterApiKey = process.env.CHASTER_API_KEY;
       }),
     });
 
+    console.log(await res.text());
+
     console.log(
         `Added ${punishmentMinutes * amountDifference} ` +
         `minutes to session ${sessionId}`,
     );
-    response.status(200).send("Success");
+    return response.status(200).send("Success");
   }
 
   console.log(`No action applicable`);
-  response.status(200).send("Action not applicable");
+  return response.status(200).send("Action not applicable");
 });

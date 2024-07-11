@@ -11,7 +11,8 @@ try {
 const db = admin.firestore();
 
 (exports) = module.exports = onRequest(async (request, response) => {
-  const payload = request.body.payload;
+  const payload = request.body;
+  console.log(payload);
   const { event, data } = payload;
 
   if (event !== "extension_session.created" &&
@@ -24,7 +25,8 @@ const db = admin.firestore();
   const sessionId = session.sessionId;
 
   if (event === "extension_session.created") {
-    const config = data.config;
+    const config = session.config;
+    console.log(config);
     const extensionId = config.extensionId;
 
     await db.collection("config").doc(extensionId).update({sessionId});

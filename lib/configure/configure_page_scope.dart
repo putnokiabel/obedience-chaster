@@ -90,7 +90,8 @@ class ConfigurePageScope extends ChangeNotifier {
     final json = jsonDecode(hash);
 
     final partnerConfigurationToken =
-        json['partnerConfigurationToken'] as String;
+        json['partnerConfigurationToken'] as String?;
+    final mainToken = json['mainToken'] as String?;
 
     // Send a message to the Chaster modal to tell it that your configuration page
     // supports the save capability
@@ -107,8 +108,10 @@ class ConfigurePageScope extends ChangeNotifier {
     window.addEventListener("message", _onEventCallback);
 
     try {
-      final extensionData =
-          await _extensionIdService.get(partnerConfigurationToken);
+      final extensionData = await _extensionIdService.get(
+        configToken: partnerConfigurationToken,
+        mainToken: mainToken,
+      );
       _extensionId = extensionData.extensionId;
       _sessionId = extensionData.sessionId;
       notifyListeners();

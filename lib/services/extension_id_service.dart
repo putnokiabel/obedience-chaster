@@ -6,10 +6,17 @@ class ExtensionIdService {
 
   final FirebaseFunctions _functions;
 
-  Future<({String extensionId, String? sessionId})> get(
-      String configToken) async {
+  Future<({String extensionId, String? sessionId})> get({
+    String? configToken,
+    String? mainToken,
+  }) async {
+    if (configToken == null && mainToken == null) {
+      throw ArgumentError('configToken or mainToken must be provided');
+    }
+
     final result = await _functions.httpsCallable('get_extension_id')({
-      'partnerConfigurationToken': configToken,
+      if (configToken != null) 'partnerConfigurationToken': configToken,
+      if (mainToken != null) 'mainToken': mainToken,
     });
 
     return (

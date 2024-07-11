@@ -24,6 +24,8 @@ class RedirectPage extends StatefulWidget {
 }
 
 class _RedirectPageState extends State<RedirectPage> {
+  var loading = true;
+
   @override
   void initState() {
     super.initState();
@@ -43,23 +45,26 @@ class _RedirectPageState extends State<RedirectPage> {
             sessionId: null,
           ),
         )
+        .then((_) => setState(() => loading = false))
         .catchError(print);
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(32),
+          padding: const EdgeInsets.all(32),
           child: Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Obedience is now connected to your Chaster account. '
-                  'You can close this tab, and return to Chaster to continue configuring your extension.',
-                  style: TextStyle(fontSize: 16),
+                  loading
+                      ? 'Connecting to Obedience...'
+                      : 'Obedience is now connected to your Chaster account. '
+                          'You can close this tab, and return to Chaster to continue configuring your extension.',
+                  style: const TextStyle(fontSize: 16),
                 ),
               ],
             ),

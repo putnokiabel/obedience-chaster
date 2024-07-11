@@ -184,6 +184,7 @@ class ConfigurePageScope extends ChangeNotifier {
           _extensionId!,
           _config!.extensionSecret!,
         );
+        _currentReward = _config?.rewardId;
 
         notifyListeners();
       }
@@ -193,6 +194,7 @@ class ConfigurePageScope extends ChangeNotifier {
           _extensionId!,
           _config!.extensionSecret!,
         );
+        _currentPunishment = _config?.punishmentId;
 
         notifyListeners();
       }

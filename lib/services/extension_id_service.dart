@@ -6,7 +6,7 @@ class ExtensionIdService {
 
   final FirebaseFunctions _functions;
 
-  Future<({String extensionId, String sessionId})> get(
+  Future<({String extensionId, String? sessionId})> get(
       String configToken) async {
     final result = await _functions.httpsCallable('get_extension_id')({
       'partnerConfigurationToken': configToken,
@@ -14,7 +14,7 @@ class ExtensionIdService {
 
     return (
       extensionId: result.data['extensionId'] as String,
-      sessionId: result.data['sessionId'] as String,
+      sessionId: result.data['sessionId'] as String?,
     );
   }
 }

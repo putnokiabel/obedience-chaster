@@ -42,7 +42,7 @@ class _ConfigurePageState extends State<ConfigurePage> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (!scope.hasGivenAccess) ...[
+                    if (!scope.hasGivenAccess && !scope.isMainPage) ...[
                       const Text(
                         'To get started, first connect to your Obedience account.',
                         style: TextStyle(fontSize: 15),
@@ -146,6 +146,13 @@ class _ConfigurePageState extends State<ConfigurePage> {
                           suffixText: 'minutes',
                         ),
                       ),
+                      if (scope.isMainPage) ...[
+                        const SizedBox(height: 32),
+                        LargePrimaryPillButton(
+                          onPressed: scope.save,
+                          child: const Text('Save'),
+                        ),
+                      ]
                     ],
                   ],
                 ),

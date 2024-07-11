@@ -86,12 +86,16 @@ class ConfigurePageScope extends ChangeNotifier {
   final TextEditingController punishmentMinutesController =
       TextEditingController();
 
+  bool _isMainPage = false;
+  bool get isMainPage => _isMainPage;
+
   Future<void> initialize(String hash) async {
     final json = jsonDecode(hash);
 
     final partnerConfigurationToken =
         json['partnerConfigurationToken'] as String?;
     final mainToken = json['mainToken'] as String?;
+    _isMainPage = mainToken != null;
 
     // Send a message to the Chaster modal to tell it that your configuration page
     // supports the save capability
@@ -156,7 +160,7 @@ class ConfigurePageScope extends ChangeNotifier {
       "*",
     );
 
-    final didSave = await _save();
+    final didSave = await save();
     if (didSave) {
       window.parent!.postMessage(
         jsonEncode({
@@ -217,7 +221,7 @@ class ConfigurePageScope extends ChangeNotifier {
     );
   }
 
-  Future<bool> _save() async {
+  Future<bool> save() async {
     if (_config?.extensionSecret == null) {
       return false;
     }

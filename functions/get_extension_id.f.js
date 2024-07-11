@@ -13,6 +13,24 @@ try {
 const chasterApiKey = process.env.CHASTER_API_KEY;
 
 (exports) = module.exports = onCall(async (request) => {
+  const mainToken = request.data.mainToken;
+  if (mainToken) {
+    const mainSession = await (await fetch(`https://api.chaster.app/api/extensions/auth/sessions/${mainToken}`, {
+      headers: {
+        "Authorization": `Bearer ${chasterApiKey}`,
+      },
+    })).json();
+
+    const session = mainSession?.session;
+    const sessionId = session?.sessionId;
+    const extensionId = session?.config?.extensionId;
+
+    return {
+      extensionId: extensionId,
+      sessionId: sessionId,
+    };
+  }
+
   const partnerConfigurationToken = request.data.partnerConfigurationToken;
 
   // Get session data from Chaster API

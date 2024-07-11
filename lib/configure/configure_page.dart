@@ -25,6 +25,8 @@ class ConfigurePage extends StatefulWidget {
 class _ConfigurePageState extends State<ConfigurePage> {
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return ChangeNotifierProvider(
       create: (context) =>
           ConfigurePageScope.of(context)..initialize(widget.hash),
@@ -48,7 +50,17 @@ class _ConfigurePageState extends State<ConfigurePage> {
                       const SizedBox(height: 16),
                       LargePrimaryPillButton(
                         onPressed: scope.giveAccess,
-                        child: const Text('Connect to Obedience'),
+                        child: scope.didLoadExtension
+                            ? const Text('Connect to Obedience')
+                            : SizedBox.square(
+                                dimension: 24,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 3,
+                                  valueColor: AlwaysStoppedAnimation(
+                                    colorScheme.onPrimary,
+                                  ),
+                                ),
+                              ),
                       ),
                     ] else ...[
                       const Text(

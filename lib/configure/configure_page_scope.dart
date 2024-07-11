@@ -38,6 +38,8 @@ class ConfigurePageScope extends ChangeNotifier {
 
   bool get hasGivenAccess => _config?.extensionSecret != null;
 
+  bool get didLoadExtension => _extensionId != null;
+
   String? _extensionId;
   String? _sessionId;
 
@@ -97,6 +99,7 @@ class ConfigurePageScope extends ChangeNotifier {
           await _extensionIdService.get(partnerConfigurationToken);
       _extensionId = extensionData.extensionId;
       _sessionId = extensionData.sessionId;
+      notifyListeners();
 
       _configSubscription = _chasterConfigService.listen(_extensionId!).listen(
         (config) {

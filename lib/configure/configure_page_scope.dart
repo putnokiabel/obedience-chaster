@@ -89,6 +89,9 @@ class ConfigurePageScope extends ChangeNotifier {
   bool _isMainPage = false;
   bool get isMainPage => _isMainPage;
 
+  bool _isSaving = false;
+  bool get isSaving => _isSaving;
+
   Future<void> initialize(String hash) async {
     final json = jsonDecode(hash);
 
@@ -224,6 +227,10 @@ class ConfigurePageScope extends ChangeNotifier {
       return false;
     }
 
+    if (_isSaving) return false;
+    _isSaving = true;
+    notifyListeners();
+
     try {
       await _chasterConfigService.update(
         _extensionId!,
@@ -249,6 +256,9 @@ class ConfigurePageScope extends ChangeNotifier {
     } catch (e) {
       print(e);
       return false;
+    } finally {
+      _isSaving = false;
+      notifyListeners();
     }
   }
 

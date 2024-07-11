@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 import 'package:obedience_chaster/widgets/buttons.dart';
+import 'package:obedience_chaster/widgets/custom_snack_bar.dart';
 
 import 'configure_page_scope.dart';
 
@@ -149,7 +151,19 @@ class _ConfigurePageState extends State<ConfigurePage> {
                       if (scope.isMainPage) ...[
                         const SizedBox(height: 32),
                         LargePrimaryPillButton(
-                          onPressed: scope.save,
+                          enabled: !scope.isSaving,
+                          onPressed: () async {
+                            await scope.save();
+
+                            if (!mounted) return;
+
+                            showTopSnackBar(
+                              Overlay.of(this.context),
+                              const CustomSnackBar.success(
+                                message: 'Your changes have been saved!',
+                              ),
+                            );
+                          },
                           child: const Text('Save'),
                         ),
                       ]

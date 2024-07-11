@@ -26,7 +26,7 @@ class ChasterConfigService {
     await _firestore
         .collection('config')
         .doc(extensionId)
-        .update(config.toMap());
+        .set(config.toMap(), SetOptions(merge: true));
   }
 }
 

@@ -141,11 +141,9 @@ class ConfigurePageScope extends ChangeNotifier {
   Future<void> _onEventCallback(
     Event event,
   ) async {
-    print('received event');
     if (event is! MessageEvent) return;
 
     final data = event.data;
-    print('event data: $data');
     if (data is! String) return;
 
     final json = jsonDecode(data);

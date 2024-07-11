@@ -22,8 +22,11 @@ class ChasterConfigService {
         .map((config) => config!);
   }
 
-  Future<void> set(String extensionId, ChasterConfig config) async {
-    await _firestore.collection('config').doc(extensionId).set(config.toMap());
+  Future<void> update(String extensionId, ChasterConfig config) async {
+    await _firestore
+        .collection('config')
+        .doc(extensionId)
+        .update(config.toMap());
   }
 }
 
@@ -35,6 +38,7 @@ class ChasterConfig {
     required this.rewardMinutes,
     required this.punishmentId,
     required this.punishmentMinutes,
+    required this.sessionId,
   });
 
   factory ChasterConfig.fromMap(Map<String, dynamic> map) {
@@ -45,6 +49,7 @@ class ChasterConfig {
       rewardMinutes: (map['rewardMinutes'] as num?)?.toInt(),
       punishmentId: map['punishmentId'] as String?,
       punishmentMinutes: (map['punishmentMinutes'] as num?)?.toInt(),
+      sessionId: map['sessionId'] as String?,
     );
   }
 
@@ -54,6 +59,7 @@ class ChasterConfig {
   final int? rewardMinutes;
   final String? punishmentId;
   final int? punishmentMinutes;
+  final String? sessionId;
 
   Map<String, dynamic> toMap() {
     return {
@@ -63,6 +69,7 @@ class ChasterConfig {
       'rewardMinutes': rewardMinutes,
       'punishmentId': punishmentId,
       'punishmentMinutes': punishmentMinutes,
+      if (sessionId != null) 'sessionId': sessionId,
     };
   }
 
@@ -73,6 +80,7 @@ class ChasterConfig {
     int? rewardMinutes,
     String? punishmentId,
     int? punishmentMinutes,
+    String? sessionId,
   }) {
     return ChasterConfig(
       userId: userId ?? this.userId,
@@ -81,6 +89,7 @@ class ChasterConfig {
       rewardMinutes: rewardMinutes ?? this.rewardMinutes,
       punishmentId: punishmentId ?? this.punishmentId,
       punishmentMinutes: punishmentMinutes ?? this.punishmentMinutes,
+      sessionId: sessionId ?? this.sessionId,
     );
   }
 }

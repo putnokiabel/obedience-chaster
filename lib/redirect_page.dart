@@ -30,17 +30,20 @@ class _RedirectPageState extends State<RedirectPage> {
 
     ChasterConfigService chasterConfigService = context.read();
 
-    chasterConfigService.set(
-      widget.id,
-      ChasterConfig(
-        userId: widget.uid,
-        extensionSecret: widget.secret,
-        rewardId: null,
-        rewardMinutes: null,
-        punishmentId: null,
-        punishmentMinutes: null,
-      ),
-    ).catchError(print);
+    chasterConfigService
+        .update(
+          widget.id,
+          ChasterConfig(
+            userId: widget.uid,
+            extensionSecret: widget.secret,
+            rewardId: null,
+            rewardMinutes: null,
+            punishmentId: null,
+            punishmentMinutes: null,
+            sessionId: null,
+          ),
+        )
+        .catchError(print);
   }
 
   @override

@@ -6,11 +6,15 @@ class ExtensionIdService {
 
   final FirebaseFunctions _functions;
 
-  Future<String> get(String configToken) async {
+  Future<({String extensionId, String sessionId})> get(
+      String configToken) async {
     final result = await _functions.httpsCallable('get_extension_id')({
       'partnerConfigurationToken': configToken,
     });
 
-    return result.data as String;
+    return (
+      extensionId: result.data['extensionId'] as String,
+      sessionId: result.data['sessionId'] as String,
+    );
   }
 }

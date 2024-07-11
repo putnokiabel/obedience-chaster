@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/widgets.dart';
 
 import 'package:provider/provider.dart';
+import 'package:universal_html/html.dart';
 
 import 'package:obedience_chaster/services/chaster_config_service.dart';
 import 'package:obedience_chaster/services/extension_id_service.dart';
@@ -38,6 +39,7 @@ class ConfigurePageScope extends ChangeNotifier {
   bool get hasGivenAccess => _config?.extensionSecret != null;
 
   String? _extensionId;
+  String? _sessionId;
 
   StreamSubscription? _configSubscription;
   ChasterConfig? _config;
@@ -48,18 +50,62 @@ class ConfigurePageScope extends ChangeNotifier {
   List<ObjectData>? _punishments;
   List<ObjectData> get punishments => _punishments ?? [];
 
+  String? _currentReward;
+  String? get currentReward => _currentReward ?? _rewards?.firstOrNull?.id;
+  set currentReward(String? value) {
+    _currentReward = value;
+    notifyListeners();
+  }
+
+  String? _currentPunishment;
+  String? get currentPunishment =>
+      _currentPunishment ?? _punishments?.firstOrNull?.id;
+  set currentPunishment(String? value) {
+    _currentPunishment = value;
+    notifyListeners();
+  }
+
+  int _rewardMinutes = 30;
+  int get rewardMinutes => _rewardMinutes;
+  set rewardMinutes(int value) {
+    _rewardMinutes = value;
+    notifyListeners();
+  }
+
+  final TextEditingController rewardMinutesController = TextEditingController();
+
+  int _punishmentMinutes = 30;
+  int get punishmentMinutes => _punishmentMinutes;
+  set punishmentMinutes(int value) {
+    _punishmentMinutes = value;
+    notifyListeners();
+  }
+
+  final TextEditingController punishmentMinutesController =
+      TextEditingController();
+
   Future<void> initialize(String hash) async {
     final json = jsonDecode(hash);
 
     final partnerConfigurationToken =
         json['partnerConfigurationToken'] as String;
 
+    window.addEventListener("message", _onEventCallback);
+
     try {
-      _extensionId = await _extensionIdService.get(partnerConfigurationToken);
+      final extensionData =
+          await _extensionIdService.get(partnerConfigurationToken);
+      _extensionId = extensionData.extensionId;
+      _sessionId = extensionData.sessionId;
 
       _configSubscription = _chasterConfigService.listen(_extensionId!).listen(
         (config) {
           _config = config;
+          rewardMinutes = config.rewardMinutes ?? 30;
+          rewardMinutesController.text = rewardMinutes.toString();
+          punishmentMinutes = config.punishmentMinutes ?? 30;
+          punishmentMinutesController.text = punishmentMinutes.toString();
+
           notifyListeners();
 
           _fetchObjectsIfNeeded();
@@ -67,6 +113,46 @@ class ConfigurePageScope extends ChangeNotifier {
       );
     } catch (e) {
       print(e);
+    }
+  }
+
+  Future<void> _onEventCallback(
+    Event event,
+  ) async {
+    if (event is! MessageEvent) return;
+
+    final data = event.data;
+    if (data is! String) return;
+
+    final json = jsonDecode(data);
+    if (json['type'] != 'chaster' ||
+        json['event'] != 'partner_configuration_save') return;
+
+    window.parent!.postMessage(
+      jsonEncode({
+        'type': "partner_configuration",
+        'event': "save_loading",
+      }),
+      "*",
+    );
+
+    final didSave = await _save();
+    if (didSave) {
+      window.parent!.postMessage(
+        jsonEncode({
+          'type': "partner_configuration",
+          'event': "save_success",
+        }),
+        "*",
+      );
+    } else {
+      window.parent!.postMessage(
+        jsonEncode({
+          'type': "partner_configuration",
+          'event': "save_failed",
+        }),
+        "*",
+      );
     }
   }
 
@@ -93,9 +179,8 @@ class ConfigurePageScope extends ChangeNotifier {
 
         notifyListeners();
       }
-    } catch (e, stack) {
+    } catch (e) {
       print(e);
-      print(stack);
     }
   }
 
@@ -108,6 +193,39 @@ class ConfigurePageScope extends ChangeNotifier {
         '&redirect=https://obedience-chaster.web.app/redirect',
       ),
     );
+  }
+
+  Future<bool> _save() async {
+    if (_config?.extensionSecret == null) {
+      return false;
+    }
+
+    try {
+      await _chasterConfigService.update(
+        _extensionId!,
+        _config!.copyWith(
+          sessionId: _sessionId,
+          rewardId: currentReward,
+          rewardMinutes: rewardMinutes,
+          punishmentId: currentPunishment,
+          punishmentMinutes: punishmentMinutes,
+        ),
+      );
+
+      await _obedienceApi.setupWebhooks(
+        extensionId: _extensionId!,
+        extensionSecret: _config!.extensionSecret!,
+        url: 'https://obedience-chaster.web.app/obedience_webhook',
+        habits: false,
+        rewards: true,
+        punishments: true,
+      );
+
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
 
   @override

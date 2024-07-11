@@ -27,7 +27,10 @@ const chasterApiKey = process.env.CHASTER_API_KEY;
   if (configuration &&
     configuration.config &&
     configuration.config.extensionId) {
-    return configuration.config.extensionId;
+    return {
+      extensionId: configuration.config.extensionId,
+      sessionId: configuration.sessionId,
+    };
   }
 
   const id = uuid.v4();
@@ -42,6 +45,7 @@ const chasterApiKey = process.env.CHASTER_API_KEY;
     body: JSON.stringify({
       config: {
         extensionId: id,
+        sessionId: configuration?.sessionId,
       },
     }),
   });

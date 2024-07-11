@@ -38,6 +38,29 @@ class ObedienceApi {
 
     return (json as List).map((e) => ObjectData.fromMap(e)).toList();
   }
+
+  Future<void> setupWebhooks({
+    required String extensionId,
+    required String extensionSecret,
+    required String url,
+    required bool habits,
+    required bool rewards,
+    required bool punishments,
+  }) async {
+    await http.post(
+      Uri.parse(
+        'https://app.obedienceapp.com/extensions/webhooks?'
+        'extensionId=$extensionId&'
+        'secret=$extensionSecret',
+      ),
+      body: jsonEncode({
+        'url': url,
+        'habits': habits,
+        'rewards': rewards,
+        'punishments': punishments,
+      }),
+    );
+  }
 }
 
 class ObjectData {

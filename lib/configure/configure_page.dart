@@ -1,8 +1,10 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import 'package:obedience_chaster/widgets/buttons.dart';
 import 'package:obedience_chaster/widgets/custom_snack_bar.dart';
@@ -45,8 +47,33 @@ class _ConfigurePageState extends State<ConfigurePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (!scope.hasGivenAccess && !scope.isMainPage) ...[
+                      Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Obedience',
+                              style: TextStyle(
+                                color: colorScheme.secondary,
+                                decoration: TextDecoration.underline,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () => launchUrlString(
+                                      'https://obedienceapp.com',
+                                      webOnlyWindowName: '_blank',
+                                    ),
+                            ),
+                            const TextSpan(
+                              text:
+                                  ' is a habit tracking app for couples in a BDSM dynamic. '
+                                  'Track habits or tasks together with your partner(s) and attach rewards and punishments to your habits.',
+                            ),
+                          ],
+                          style: const TextStyle(fontSize: 15),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
                       const Text(
-                        'To get started, first connect to your Obedience account.',
+                        'To get started, first connect Chaster to your Obedience account.',
                         style: TextStyle(fontSize: 15),
                       ),
                       const SizedBox(height: 16),
@@ -71,7 +98,8 @@ class _ConfigurePageState extends State<ConfigurePage> {
                       ),
                       const SizedBox(height: 8),
                       const Text(
-                        'Pick an Obedience punishment to connect to this lock.',
+                        'Pick an Obedience punishment to connect to this lock. '
+                        'Any time this punishment is received, lock time will be added.',
                         style: TextStyle(fontSize: 15),
                       ),
                       DropdownButton(
@@ -114,7 +142,8 @@ class _ConfigurePageState extends State<ConfigurePage> {
                       ),
                       const SizedBox(height: 8),
                       const Text(
-                        'Pick an Obedience reward to connect to this lock.',
+                        'Pick an Obedience reward to connect to this lock. '
+                        'Any time this reward is received, lock time will be removed.',
                         style: TextStyle(fontSize: 15),
                       ),
                       DropdownButton(

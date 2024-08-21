@@ -1,3 +1,4 @@
 {
-    "eslint.format.enable": true
+  "eslint.format.enable": true,
+  "dart.flutterSdkPath": ".fvm/versions/3.22.3"
 }

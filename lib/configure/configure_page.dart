@@ -104,17 +104,25 @@ class _ConfigurePageState extends State<ConfigurePage> {
                             'Any time this punishment is received, lock time will be added.',
                             style: TextStyle(fontSize: 15),
                           ),
-                          DropdownButton(
+                          DropdownButton<String>(
                             value: scope.currentPunishment,
                             items: scope.punishments
-                                .map(
-                                  (p) => DropdownMenuItem(
-                                    value: p.id,
-                                    child: Text(p.name),
+                                    ?.map(
+                                      (p) => DropdownMenuItem(
+                                        value: p.id,
+                                        child: Text(p.name),
+                                      ),
+                                    )
+                                    .toList() ??
+                                [
+                                  const DropdownMenuItem(
+                                    value: '',
+                                    child: Text('Loading...'),
                                   ),
-                                )
-                                .toList(),
-                            onChanged: (p) => scope.currentPunishment = p,
+                                ],
+                            onChanged: scope.punishments == null
+                                ? null
+                                : (p) => scope.currentPunishment = p,
                           ),
                           const SizedBox(height: 16),
                           const Text(
@@ -148,17 +156,25 @@ class _ConfigurePageState extends State<ConfigurePage> {
                             'Any time this reward is received, lock time will be removed.',
                             style: TextStyle(fontSize: 15),
                           ),
-                          DropdownButton(
+                          DropdownButton<String>(
                             value: scope.currentReward,
                             items: scope.rewards
-                                .map(
-                                  (r) => DropdownMenuItem(
-                                    value: r.id,
-                                    child: Text(r.name),
+                                    ?.map(
+                                      (r) => DropdownMenuItem(
+                                        value: r.id,
+                                        child: Text(r.name),
+                                      ),
+                                    )
+                                    .toList() ??
+                                [
+                                  const DropdownMenuItem(
+                                    value: '',
+                                    child: Text('Loading...'),
                                   ),
-                                )
-                                .toList(),
-                            onChanged: (r) => scope.currentReward = r,
+                                ],
+                            onChanged: scope.rewards == null
+                                ? null
+                                : (r) => scope.currentReward = r,
                           ),
                           const SizedBox(height: 16),
                           const Text(

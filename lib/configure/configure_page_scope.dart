@@ -47,10 +47,10 @@ class ConfigurePageScope extends ChangeNotifier {
   ChasterConfig? _config;
 
   List<ObjectData>? _rewards;
-  List<ObjectData> get rewards => _rewards ?? [];
+  List<ObjectData>? get rewards => _rewards;
 
   List<ObjectData>? _punishments;
-  List<ObjectData> get punishments => _punishments ?? [];
+  List<ObjectData>? get punishments => _punishments;
 
   String? _currentReward;
   String? get currentReward => _currentReward ?? _rewards?.firstOrNull?.id;
@@ -187,28 +187,33 @@ class ConfigurePageScope extends ChangeNotifier {
     }
 
     try {
-      if (_rewards == null) {
-        _rewards = await _obedienceApi.getRewards(
-          _extensionId!,
-          _config!.extensionSecret!,
-        );
-        _currentReward = _config?.rewardId;
-
-        notifyListeners();
-      }
-
-      if (_punishments == null) {
-        _punishments = await _obedienceApi.getPunishments(
-          _extensionId!,
-          _config!.extensionSecret!,
-        );
-        _currentPunishment = _config?.punishmentId;
-
-        notifyListeners();
-      }
+      await Future.wait([
+        _getRewards(),
+        _getPunishments(),
+      ]);
     } catch (e) {
       print(e);
     }
+  }
+
+  Future<void> _getRewards() async {
+    _rewards = await _obedienceApi.getRewards(
+      _extensionId!,
+      _config!.extensionSecret!,
+    );
+    _currentReward = _config?.rewardId;
+
+    notifyListeners();
+  }
+
+  Future<void> _getPunishments() async {
+    _punishments = await _obedienceApi.getPunishments(
+      _extensionId!,
+      _config!.extensionSecret!,
+    );
+    _currentPunishment = _config?.punishmentId;
+
+    notifyListeners();
   }
 
   Future<void> giveAccess() async {

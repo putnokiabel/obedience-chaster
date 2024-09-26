@@ -105,7 +105,9 @@ class _ConfigurePageState extends State<ConfigurePage> {
                             style: TextStyle(fontSize: 15),
                           ),
                           DropdownButton<String>(
-                            value: scope.currentPunishment,
+                            value: scope.punishments == null
+                                ? 'loading'
+                                : scope.currentPunishment,
                             items: scope.punishments
                                     ?.map(
                                       (p) => DropdownMenuItem(
@@ -116,7 +118,7 @@ class _ConfigurePageState extends State<ConfigurePage> {
                                     .toList() ??
                                 [
                                   const DropdownMenuItem(
-                                    value: '',
+                                    value: 'loading',
                                     child: Text('Loading...'),
                                   ),
                                 ],
@@ -157,7 +159,9 @@ class _ConfigurePageState extends State<ConfigurePage> {
                             style: TextStyle(fontSize: 15),
                           ),
                           DropdownButton<String>(
-                            value: scope.currentReward,
+                            value: scope.rewards == null
+                                ? 'loading'
+                                : scope.currentReward,
                             items: scope.rewards
                                     ?.map(
                                       (r) => DropdownMenuItem(
@@ -168,7 +172,7 @@ class _ConfigurePageState extends State<ConfigurePage> {
                                     .toList() ??
                                 [
                                   const DropdownMenuItem(
-                                    value: '',
+                                    value: 'loading',
                                     child: Text('Loading...'),
                                   ),
                                 ],

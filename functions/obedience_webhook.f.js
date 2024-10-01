@@ -22,7 +22,7 @@ const chasterApiKey = process.env.CHASTER_API_KEY;
 
   const amountBefore = before.amount;
   const amountAfter = after.amount;
-  if (!amountBefore || !amountAfter) {
+  if (amountBefore == null || amountAfter == null) {
     console.warn("Amount not found");
     return response.status(200).send("Amount not found");
   }

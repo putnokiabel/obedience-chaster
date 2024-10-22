@@ -24,10 +24,12 @@ const chasterApiKey = process.env.CHASTER_API_KEY;
     const session = mainSession?.session;
     const sessionId = session?.sessionId;
     const extensionId = session?.config?.extensionId;
+    const role = mainSession?.role;
 
     return {
       extensionId: extensionId,
       sessionId: sessionId,
+      role: role,
     };
   }
 
@@ -48,6 +50,7 @@ const chasterApiKey = process.env.CHASTER_API_KEY;
     return {
       extensionId: configuration.config.extensionId,
       sessionId: configuration.sessionId,
+      role: configuration.role,
     };
   }
 

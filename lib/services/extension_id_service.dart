@@ -1,4 +1,5 @@
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:collection/collection.dart';
 
 class ExtensionIdService {
   const ExtensionIdService({required FirebaseFunctions functions})
@@ -6,7 +7,7 @@ class ExtensionIdService {
 
   final FirebaseFunctions _functions;
 
-  Future<({String extensionId, String? sessionId})> get({
+  Future<ExtensionSession> get({
     String? configToken,
     String? mainToken,
   }) async {
@@ -19,9 +20,31 @@ class ExtensionIdService {
       if (mainToken != null) 'mainToken': mainToken,
     });
 
-    return (
+    return ExtensionSession(
       extensionId: result.data['extensionId'] as String,
       sessionId: result.data['sessionId'] as String?,
+      role: Role.of(result.data['role'] as String?),
     );
+  }
+}
+
+class ExtensionSession {
+  const ExtensionSession({
+    required this.extensionId,
+    required this.sessionId,
+    required this.role,
+  });
+
+  final String extensionId;
+  final String? sessionId;
+  final Role? role;
+}
+
+enum Role {
+  wearer,
+  keyholder;
+
+  static Role? of(String? value) {
+    return Role.values.firstWhereOrNull((r) => r.name == value);
   }
 }

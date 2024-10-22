@@ -207,6 +207,18 @@ class _ConfigurePageState extends State<ConfigurePage> {
                             LargePrimaryPillButton(
                               enabled: !scope.isSaving,
                               onPressed: () async {
+                                if (!scope.isKeyholder) {
+                                  showTopSnackBar(
+                                    Overlay.of(this.context),
+                                    const CustomSnackBar.error(
+                                      message:
+                                          'Only keyholders update lock settings.',
+                                    ),
+                                  );
+
+                                  return;
+                                }
+
                                 await scope.save();
 
                                 if (!mounted) return;

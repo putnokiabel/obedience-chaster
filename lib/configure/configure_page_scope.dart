@@ -92,6 +92,9 @@ class ConfigurePageScope extends ChangeNotifier {
   bool _isSaving = false;
   bool get isSaving => _isSaving;
 
+  bool _isKeyholder = true;
+  bool get isKeyholder => _isKeyholder;
+
   Future<void> initialize(String hash) async {
     final json = jsonDecode(hash);
 
@@ -121,6 +124,8 @@ class ConfigurePageScope extends ChangeNotifier {
       );
       _extensionId = extensionData.extensionId;
       _sessionId = extensionData.sessionId;
+      _isKeyholder =
+          extensionData.role == Role.keyholder || extensionData.role == null;
       notifyListeners();
 
       _configSubscription = _chasterConfigService.listen(_extensionId!).listen(
